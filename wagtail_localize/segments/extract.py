@@ -149,11 +149,14 @@ class StreamFieldSegmentExtractor:
             # stored value is the new format before extracting segments, otherwise the block ids will continue
             # to change.
             has_block_format = False
+            raw_value_i = None
             if isinstance(raw_value, dict) and "value" in raw_value:
+                raw_value_i=raw_value["value"][0]
                 has_block_format = list_block.list_block._item_is_in_block_format(
-                    raw_value["value"][0]
+                    raw_value_i
                 )
             elif isinstance(raw_value, list):
+                raw_value_i=raw_value[0]
                 has_block_format = list_block.list_block._item_is_in_block_format(
                     raw_value[0]
                 )
@@ -161,7 +164,7 @@ class StreamFieldSegmentExtractor:
                 for block in list_block.bound_blocks:
                     segments.extend(
                         segment.wrap(block.id)
-                        for segment in self.handle_block(block.block, block.value)
+                        for segment in self.handle_block(block.block, block.value, raw_value=raw_value_i)
                     )
         return segments
 
